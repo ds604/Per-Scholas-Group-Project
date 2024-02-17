@@ -32,3 +32,236 @@ basic json that i'm using for the site, to initialize the music player
             }
 ]
 ```
+
+sample CloudFormation file: 
+```
+AWSTemplateFormatVersion: 2010-09-09
+Description: Lab template
+
+# Lab VPC with 1 public subnet
+# Role for EC2 instance to launch another instance
+# Misconfigured web server for challenge
+
+Parameters:
+
+  AmazonLinuxAMIID:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+
+  KeyName:
+    Type: String
+    Description: Keyname for the keypair
+
+Resources:
+
+###########
+# VPC with Internet Gateway
+###########
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: Lab VPC
+
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Lab IGW
+
+  VPCtoIGWConnection:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn:
+      - IGW
+      - VPC
+    Properties:
+      InternetGatewayId: !Ref IGW
+      VpcId: !Ref VPC
+
+###########
+# Public Route Table
+###########
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn: VPC
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: Public Route Table
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn:
+      - PublicRouteTable
+      - IGW
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref PublicRouteTable
+
+###########
+# Public Subnet
+###########
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    DependsOn: VPC
+    Properties:
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: true
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: AWS::Region
+      Tags:
+        - Key: Name
+          Value: Public Subnet
+
+  PublicRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn:
+      - PublicRouteTable
+      - PublicSubnet1
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+###########
+# IAM Role for Bastion
+###########
+
+  BastionInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref BastionRole]
+      InstanceProfileName: Bastion-Role
+
+  BastionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Bastion-Role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: ec2:*
+                Resource: '*'
+              - Effect: Allow
+                Action: ssm:Get*
+                Resource: '*'
+              - Effect: Deny
+                Action: ec2:RunInstances
+                Resource: arn:aws:ec2:*:*:instance/*
+                Condition:
+                  StringNotEquals:
+                    ec2:InstanceType:
+                    - t2.micro
+                    - t3.micro
+              - Effect: Deny
+                Action:
+                  - ec2:*Spot*
+                  - ec2:*ReservedInstances*
+                Resource: "*"
+              - Effect: Deny
+                Action: ec2:StartInstances
+                Resource: arn:aws:ec2:*:*:instance/*
+                Condition:
+                  StringNotEquals:
+                    ec2:InstanceType:
+                    - t2.micro
+                    - t3.micro
+
+###########
+# Security Group for Web Server launched by student
+###########
+
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: WebSecurityGroup
+      GroupDescription: Enable HTTP and SSH ingress
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: Web Server Security Group
+
+###########
+# Misconfigured Instance for Challenge
+###########
+
+  MisconfiguredWebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref AmazonLinuxAMIID
+      SubnetId: !Ref PublicSubnet1
+      SecurityGroupIds:
+        - !Ref MisconfiguredSecurityGroup
+      KeyName: !Ref KeyName
+      Tags:
+        - Key: Name
+          Value: Misconfigured Web Server
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum install -y httpd php
+          /usr/bin/systemctl enable httpd
+          /usr/bin/systemctl start httpdd 2>/tmp/errors.txt
+
+  MisconfiguredSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Challenge-SG
+      GroupDescription: Enable SSH ingress
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: HTTP and SSH Security Group
+
+Outputs:
+
+  WebSecurityGroup:
+    Value: !Sub ${WebServerSecurityGroup}
+    Description: Web Security Group
+
+  PublicSubnet:
+    Value: !Sub ${PublicSubnet1}
+    Description: Public Subnet
+
+  MisconfiguredWebServer:
+    Value: !Sub ${MisconfiguredWebServer.PublicIp}
+    Description: Misconfigured Instance
+```
