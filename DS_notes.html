@@ -4,10 +4,8 @@ Frontend prototype: https://ds604.neocities.org/CoolestWebsiteOnTheInternet_0202
 prototype frontend, with the main sections: the viewer page, the artist upload page, and a music player. i made it in sort of the artist-oriented myspace style, where there might be the possibility of skinning the page with different themes, and users can put their own stuff on the page. there doesn't have to be too much for this, since frontend isn't really part of this class. but anyway, it might help to figure out what gets stored and delivered on the backend. the json list of songs would be the same regardless of the styling, but user customization might be an interesting issue, since it brings up issues like site security
 
 
-
-```
-basic json that i'm using for the site, to initialize the music player
-
+<details><summary>basic json that i'm using for the site, to initialize the music player</summary>
+<pre>
 [
             {
                 metaData: {
@@ -31,10 +29,11 @@ basic json that i'm using for the site, to initialize the music player
                 url: "https://ds604.neocities.org/Public/sound/NeverForgiveAction_2%20Third%20World%20Lover.mp3"
             }
 ]
-```
+</pre>
+</details>
 
-sample CloudFormation file: 
-```
+
+<details><summary>sample CloudFormation file:</summary>
 AWSTemplateFormatVersion: 2010-09-09
 Description: Lab template
 
@@ -264,4 +263,4 @@ Outputs:
   MisconfiguredWebServer:
     Value: !Sub ${MisconfiguredWebServer.PublicIp}
     Description: Misconfigured Instance
-```
+</details>
