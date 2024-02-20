@@ -264,3 +264,61 @@ Outputs:
     Value: !Sub ${MisconfiguredWebServer.PublicIp}
     Description: Misconfigured Instance
 </details>
+
+
+<details><summary>How to use web tokens</summary>
+<pre>
+cat <<-EOF | deno run -Ar -
+import { create, verify , getNumericDate, Payload, Header} from "https://deno.land/x/djwt@v2.4/mod.ts";
+
+const encoder = new TextEncoder()
+var keyBuf = encoder.encode("mySuperSecret");
+
+var key = await crypto.subtle.importKey(
+  "raw",
+  keyBuf,
+  {name: "HMAC", hash: "SHA-256"},
+  true,
+  ["sign", "verify"],
+)
+
+const payload: Payload = {
+  iss: "deno-demo",
+  exp: getNumericDate(300), // expires in 5 min.
+};
+
+const algorithm = "HS256"
+
+const header: Header = {
+  alg: algorithm,
+  typ: "JWT",
+  foo: "bar"  // custom header
+};
+
+const jwt = await create(header, payload, key)
+
+console.log(jwt);
+
+// create a different key to test the verifcation
+/*keyBuf = encoder.encode("TheWrongSecret");
+key = await crypto.subtle.importKey(
+  "raw",
+  keyBuf,
+  {name: "HMAC", hash: "SHA-256"},
+  true,
+  ["sign", "verify"],
+)
+*/
+
+try {
+  const payload = await verify(jwt, key); 
+    console.log("JWT is valid");
+    console.log(payload);
+}
+catch(_e){
+  const e:Error= _e;
+  console.log(e.message);
+}
+EOF
+</pre>
+</details>
