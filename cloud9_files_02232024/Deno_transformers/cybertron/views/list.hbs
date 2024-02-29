@@ -1,0 +1,28 @@
+<div style="background-color: black; color:aliceblue; width:30%; margin: 1rem">
+    Autobots
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-evenly; width:80%"> 
+	{{#each autobots}}
+		<div style="display: flex; flex-direction: column;">
+			<img src="{{this.image}}"  onerror=this.src="https://images.unsplash.com/photo-1512572525676-f9b59951929e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60">
+			<div style="background-color: black; color:aliceblue; margin: 1rem">
+				{{this.name}}
+			</div>
+		</div>
+	{{/each}}
+</div>
+
+
+<div style="background-color: black; color:aliceblue; width:30%; margin:1rem">
+    Decepticons
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-evenly; width:80%"> 
+	{{#each decepticons}}
+		<div style="display: flex; flex-direction: column;">
+			<img src="{{this.image}}"  onerror=this.src="https://images.unsplash.com/photo-1512572525676-f9b59951929e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60">
+			<div style="background-color: black; color:aliceblue; margin: 1rem">
+				{{this.name}}
+			</div>
+		</div>
+	{{/each}}
+</div>
