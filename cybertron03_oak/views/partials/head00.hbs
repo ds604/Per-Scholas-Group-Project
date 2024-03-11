@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Cabin&family=Inconsolata&family=Nunito&family=Nunito+Sans&family=Pacifico&family=Quicksand&family=Rubik&family=VT323&display=swap" rel="stylesheet"> -->
+<style notes="css for tabs">
+ /* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 0px solid #ccc;
+  background-color: #640431;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  /* background-color: #ddd; */
+  filter: invert(1);
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  /* background-color: #ccc; */
+  filter: hue-rotate(45deg);
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+} 
+
+.tablinks {
+    font-family: pico8;
+    font-size: large;
+    color: #CEA62C;
+}
+
+#signup_box, #login_box, #createNew_box, #logout_box { background-color: #801130; }
+</style>
+<script src="https://ds604.neocities.org/webcomponents/BFS_AudioPlayer/audioPlayer.js"></script>
+<script notes="websockets setup">
+    const ws = new WebSocket("ws://localhost:8080/wss");
+    ws.onopen = () => console.log("Connected to server");
+    ws.onmessage = (m) => {
+      let msg = JSON.parse(m.data);
+      console.log("Got message from server: ", msg);
+      // ws.send(`Some message ${crypto.randomUUID()}`);
+      
+      "if i get a message to update the song list, then run the render function"
+      if(msg.type === "songListUpdate"){
+        renderSongList(msg.songList, "songListTableBody")
+      }
+    };
+    ws.onclose = () => console.log("Disconnected from server");
+</script>
+<script notes="initial render of song list">
+  
+</script>
+</head>
+<body style = "font-family: 'Quicksand', sans-serif; font-size:1rem; margin:0; padding:0; background-color: #001111; color: aliceblue">
+    
+<!--         <div style="background-color: black; color:aliceblue; width:100%;">
+            Welcome to the Coolest Music Site on the Entire Internet!!!
+        </div> -->
+
+            <!-- Navigation -->
+        <div class="tab">
+            <img src="https://ds604.neocities.org/Public/dinosaur_png24.png" style="float: left; padding:5px;">
+          <button class="tablinks" onclick="openTab(event, 'Welcome_tab')">Home</button>
+          <button class="tablinks" onclick="openTab(event, 'HangOut_tab')">Listen</button>
+          <button class="tablinks" onclick="openTab(event, 'MakeStuff_tab')">Create</button>
+
+
+            {{#if state.auth}}
+                <button class="tablinks" style="float: right" onclick="logout_box.style.display = logout_box.style.display === 'none' ? 'flex' : 'none'">{{state.username}}</button>
+                <div id="logout_box" style="display: none; justify-content:right; position:fixed; right:0em; top: 3em;">
+                    <a href="/logout"> <button class="tablinks" style="">Logout</button> </a>
+                </div>
+            {{else}}
+                <button class="tablinks" style="float: right" onclick="signupLogin_box.style.display = signupLogin_box.style.display === 'none' ? 'flex' : 'none'">Log in</button>
+            {{/if}}
+
+
+          <!-- <button class="tablinks" style="float: right">sign up</button> -->
+        </div>
+
+        {{#if message}}
+            <div style="background-color: black; color:aliceblue; width:30%; position:fixed; left: 0; bottom:0;" >
+                Message : {{message}}
+            </div>
+        {{/if}}
+
+        {{#if state.auth}}
+
+            <!-- <a href="/logout"> <button> Logout </button> </a> -->
+
+             <style>
+                #createNew_box input {
+                    margin-top: 2px;
+                    margin-bottom: 2px;
+                    display:inline-block; 
+                    *display: inline;     /* for IE7*/
+                    zoom:1;              /* for IE7*/
+                    vertical-align:middle;
+                    margin-left:50px;
+                }
+
+                #createNew_box label {
+                    display:inline-block;
+                    *display: inline;     /* for IE7*/
+                    zoom:1;              /* for IE7*/
+                    float: left;
+                    padding-top: 0px;
+                    text-align: right;
+                    width: 50px;
+                }​
+            </style>
+            <div id="createNew_box" style="padding: 1rem; width:40%; position: fixed; right:0; bottom:0; border-radius: 1em 1em 0 0;">
+                <div class="tab">
+                  <button class="tablinks" style="padding:0.3em;" onclick="songUploadForm.style.display = songUploadForm.style.display === 'none' ? 'flex' : 'none'"> Upload a Song </button> 
+                </div>
+                <form id="songUploadForm" enctype="multipart/form-data" action="/" method="POST" style="display: flex; flex-direction: column; border: 1px solid black; margin:1rem; padding: 1rem;">
+                    <div class="block">
+                        <label>Title :</label> <input type="text" name="title" />
+                    </div>
+                    <div class="block">
+                        <label>Artist : </label><input type="text" name="artist"/>
+                    </div>
+                    
+                    <div class="block">
+                        <label for="avatar">Choose a file:</label>
+                        <input id="songUploadInput" type="file" onchange="previewFile()" accept="audio/*" /><br>
+                        <audio id="songUploadPreview" controls src=""></audio><br>
+                    </div>
+                    <!-- <input type="file" id="songUpload" name="avatar" accept=".mp3" /> -->
+
+                        <input type='button' id='btnLoad' value='Upload' onclick="upload()" />
+                        <pre id="fileUploadResult"></pre>
+                    <!-- -----------------Song upload------------------- -->
+
+                    <!-- <button style="margin: 1rem;;"> Upload </button> -->
+                </form>
+            </div>
+
+            <!-- -----------------Song upload------------------- -->
+              <script>
+                  function previewFile() {
+                        //   var preview = document.querySelector('audio');
+                        var preview = document.getElementById('songUploadPreview')
+                        var file    = document.getElementById('songUploadInput').files[0];
+                        console.log(file)
+                        var reader  = new FileReader();
+
+                          reader.addEventListener("load", function () {
+                            preview.src = reader.result;
+                          }, false);
+
+                          if (file) {
+                            reader.readAsDataURL(file);
+                          }
+                    }
+
+                    async function upload() {
+                      // const canvas = document.getElementById("canvas")
+                      // const input = document.getElementById('imgfile');
+                      const fp1 = document.getElementById("songUploadInput").files[0]
+                      console.log(fp1)
+                      const formData = new FormData(songUploadForm);
+                      formData.append('music_file', fp1, fp1.name);
+                      const res = await fetch('http://localhost:8080/upload', {
+                          'mode': 'no-cors',
+                          'method': 'POST',
+                          // 'content-type': 'multipart/form-data',
+                          'body': formData,
+                      });
+                      console.log("response is: ", res)
+
+                      // await post(canvas, input.files[0].name);
+                      // write('File submitted: ', fp1.name)
+                      document.getElementById("fileUploadResult").innerHTML += `File submitted: ${fp1.name}\n`
+                    }
+
+                    function write(msg) {
+                      const p = document.createElement('p');
+                      p.innerHTML = msg;
+                      // document.body.appendChild(p);
+                      document.getElementById("result").innerHTML = `<p>${msg}</p>`
+                    }
+              </script>
+
+        {{else}}
+
+            <div id="signupLogin_box" style="display: none; justify-content: right; position: fixed">
+                <div id="signup_box" style="padding: 1rem; position: fixed; right: 0em;">
+                    <div> Sign up </div> 
+                    <form action="/signup" method="POST" style="display: flex; flex-direction: column; border: 1px solid black; margin:1rem; padding: 1rem;">
+                        Username : <input type="text" name="username">
+                        Password : <input type="password" name="password" style="margin-bottom:1rem;">
+                        <button> Register </button>
+                    </form>
+                </div>
+                <div id="login_box" style="padding: 1rem; position: fixed; right: 18.2em;">
+                    <div> Log in </div> 
+                    <form action="/login" method="POST" style="display: flex; flex-direction: column; border: 1px solid black; margin:1rem; padding: 1rem;">
+                        Username : <input type="text" name="username">
+                        Password : <input type="password" name="password" style="margin-bottom:1rem;">
+                        <button> Enter </button>
+                    </form>
+                </div>
+            </div>
+
+        {{/if}}
+
+    </center>

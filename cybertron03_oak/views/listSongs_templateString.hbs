@@ -1,0 +1,51 @@
+<style notes="styles for song list">
+	#songListTable { padding:1em; width: 100%;}
+    #songListTable th {padding: 0.5em;}
+    #songListTable th, td {
+        text-align: left;
+    }
+    #songListTable tbody tr:nth-child(even) {background: #1C1A1A}
+	#songListTable tbody tr:nth-child(odd) {background: #252625}
+</style>
+<table id="songListTable">
+	<thead>
+	    <tr>
+	        <th style="width:25em">Song</th>
+	        <th style="width:15em">Title</th>
+	        <th style="width:20em">Artist</th>
+	    </tr>
+    </thead>
+
+    <tbody id="songListTableBody"></tbody>
+
+</table>
+
+<script>
+    const songList = {{eval(songList)}}
+
+    function renderSongList(){
+	    let songListRender = songList.map(song => {
+	        return `
+	    	<tr>
+		        <td>
+		            <img src="${song.metaData.imageUrl}" 
+		            	onerror=this.src="https://ds604.neocities.org/Public/dinosaur.png"
+		            	style="height: 40px; display: inline; float: left">
+	            	<audio-player title="${song.metaData.title}"
+		              src="${song.url}"
+		              bar-width="5"
+		              bar-gap="2"
+		              preload autostart="0" crossorigin
+		              style=""
+		               ></audio-player>
+		        </td>
+		        <td>${song.metaData.title}</td>
+		        <td>${song.metaData.artist}</td>
+		    </tr>`
+	    }).join('\n')
+
+	    let songListTableBody = document.getElementById("songListTableBody")
+	    songListTableBody.innerHTML = songListRender
+    }
+    renderSongList()
+</script>

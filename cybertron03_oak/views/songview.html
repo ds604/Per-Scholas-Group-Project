@@ -1,0 +1,70 @@
+<h4>Static list of songs</h4>
+<figure>
+  <figcaption>Artist: A-ha</figcaption>
+  <figcaption>Title: Take On Me</figcaption>
+    <audio controls src="https://team5perscholas.s3.amazonaws.com/a-ha+-+Take+On+Me+(Lyrics).mp3"></audio>
+</figure>
+
+<figure>
+  <figcaption>Artist: Sia</figcaption>
+  <figcaption>Title: Chandelier</figcaption>
+    <audio controls src="https://team5perscholas.s3.amazonaws.com/Sia+-+Chandelier+(Lyrics).mp3"></audio>
+</figure>
+
+
+<hr>
+///////////////////////////////////////////////////
+<hr>
+<h4>Dynamically rendered song list</h4>
+<div id="dynamicSongList"></div>
+
+
+<script>
+let songList = [
+            {
+                metaData: {
+                    artist: "Method Man feat. Busta Rhymes",
+                    title: "What's Happenin'",
+                },
+                url: "https://ds604.neocities.org/Public/sound/02%20What's%20Happenin%20(Feat%20Busta%20Rh.mp3"
+            },
+            {
+                metaData: {
+                    artist: "Fugees",
+                    title: "Vocab",
+                },
+                url: "https://ds604.neocities.org/Public/sound/Vocab%20(Refugees%20Hip%20Hop%20Remix).mp3"
+            },
+            {
+                metaData: {
+                    artist: "Kid Koala",
+                    title: "Third World Lover"
+                },
+                url: "https://ds604.neocities.org/Public/sound/NeverForgiveAction_2%20Third%20World%20Lover.mp3"
+            },
+            {
+                metaData: {
+                    artist: "A-ha",
+                    title: "Take On Me"
+                },
+                url: "https://ds604.neocities.org/Public/sound/NeverForgiveAction_2%20Third%20World%20Lover.mp3"
+            },
+            {
+                metaData: {
+                    artist: "Sia",
+                    title: "Chandelier"
+                },
+                url: "https://ds604.neocities.org/Public/sound/NeverForgiveAction_2%20Third%20World%20Lover.mp3"
+            }
+        ]
+
+let songListRendered = songList.map(song => {
+    return `<figure>
+        <figcaption>Artist: ${song.metaData.artist}</figcaption>
+        <figcaption>Title: ${song.metaData.title}</figcaption>
+    <audio controls src="${song.url}"></audio>
+</figure>`
+})
+
+dynamicSongList.innerHTML = songListRendered
+</script>
