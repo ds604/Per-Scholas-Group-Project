@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin&family=Inconsolata&family=Nunito&family=Nunito+Sans&family=Pacifico&family=Quicksand&family=Rubik&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body style = "font-family: 'Quicksand', sans-serif; font-size:2rem;">
+
+    <center>
+
+        <div style="background-color: black; color:aliceblue; width:30%;">
+            Welcome to Cybertron
+        </div>
+
+        {{#if message}}
+            <div style="background-color: black; color:aliceblue; width:30%;" >
+                Message : {{message}}
+            </div>
+        {{/if}}
+
+        {{#if request.auth}}
+
+            <a href="/logout"> <button> Logout </button> </a>
+
+            <div style="padding: 1rem; width:20%">
+                <div> Create a Transformer </div> 
+                <form action="/" method="POST" style="display: flex; flex-direction: column; border: 1px solid black;  margin:1rem; padding: 1rem;">
+                    Name : <input type="text" name="name">
+                    Image : <input type="text" name="image">
+                    <div style="display: flex; justify-content: center; align-items: center;"> <input type="radio" name="type" value="autobot"> <label>  Autobot </label> </div>
+                    <div style="display: flex; justify-content: center; align-items: center;"> <input type="radio" name="type" value="decepticon"> <label> Decepticon </label>  </div>
+                    <button style="margin: 1rem;;"> Create </button>
+                </form>
+            </div>
+
+        {{else}}
+
+            <div style="display: flex; justify-content: center">
+                <div style="padding: 1rem;">
+                    <div> Register as a Prime </div> 
+                    <form action="/signup" method="POST" style="display: flex; flex-direction: column; border: 1px solid black;  margin:1rem; padding: 1rem;">
+                        Username : <input type="text" name="username">
+                        Password : <input type="password" name="password" style="margin-bottom:1rem;">
+                        <button> Register </button>
+                    </form>
+                </div>
+                <div style="padding: 1rem;">
+                    <div> Enter Cybertron </div> 
+                    <form action="/login" method="POST" style="display: flex; flex-direction: column; border: 1px solid black; margin:1rem; padding: 1rem;">
+                        Username : <input type="text" name="username">
+                        Password : <input type="password" name="password" style="margin-bottom:1rem;">
+                        <button> Enter </button>
+                    </form>
+                </div>
+            </div>
+
+        {{/if}}
+
+    </center>

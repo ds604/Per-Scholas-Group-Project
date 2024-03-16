@@ -1,0 +1,57 @@
+Application Architecture
+
+Interface components
+	- Song list
+		- each as an audio player webcomponent
+	- Login button
+		- Login In form component
+		- Sign Up form component
+	- Song upload component
+		- Form to enter Title and Artist
+
+Communication over HTTP for authentication
+	- standard username/password authentication scheme - using bcrypt for encryption 
+	- webtokens for session management
+
+Communication over Websockets to update song list when the user uploads a file
+
+
+
+
+Justification for 
+
+most available music sites are *consumer-oriented*, with the interests of artists de-prioritized or ignored
+	- Spotify, Soundcloud, Bandcamp
+	- the artist upload page forces users to deal with terms and conditions which they likely will not understand, before they are able to do anything at all. artists are not lawyers, and shouldn't be forced to act like lawyers
+	- artists need greater privileges and freedom than a consumer (read, write, execute vs read)
+	- because they are doing things which are novel and taking risks. making music requires much more effort than listening to it, requires greater skill
+
+historical development of social network services
+	- geocities, myspace, facebook, spotify/soundcloud
+	
+	- earlier ones were closer to collaborative workspaces, working directly on HTML files. MySpace still allowed user customization, Facebook disallowed this, and so this leads to where we are now
+	
+	- why did this happen? problems with security and scaling led increasingly to freedoms being taken away. the easiest route to deal with problems is to treat users as hostile agents who have no privileges, and to take their freedom away
+
+	- with the benefit of hindsight, with all that we've learned about security and scalability, it may be possible to create a new system which gives back some of the freedoms that existed in the original internet, 
+
+
+
+#######################################
+
+First while david is showcasing the audio player and showing how to play songs and being able to fast forward and rewind
+
+Jasmine will give the reason for our choice in audio player is to give us consistency in both how it appears on the website and prevents users from directly downloading the played song files to avoid potential security risks as well as avoids potential copyright infringement rules and issues.
+
+Second while david is logging in as a user and failing to login as a non registered user Jyothi will explain the log in mechanism, showcase error message incase of wrong password or non authorized users, how web tokens are generated if and when proper user credentials are used to login, or cookies will be displayed to say, "you are not registered" or "wrong password".
+
+
+
+######################
+1) I upload a song, it shows up in the list. 
+2) I upload a sound effect file, it shows up in the list
+	- as an artist developing my work, I may want to see my work in the context of what already exists and is out there. but I do not necessarily want my work to be publicly available at this point
+	
+3) I log out, and my private files are no longer part of the publicly available song list.
+	- privacy by default
+

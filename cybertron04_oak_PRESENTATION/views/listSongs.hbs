@@ -1,0 +1,116 @@
+<style notes="styles for song list">
+	#songListTable { padding:1em; width: 100%;}
+    #songListTable th {padding: 0.5em;}
+    #songListTable th, td {
+        text-align: left;
+    }
+    #songListTable td {
+        padding: 0em;
+    }
+    #songListTable tbody tr:nth-child(even) {background: #1C1A1A}
+	#songListTable tbody tr:nth-child(odd) {background: #252625}
+</style>
+<table id="songListTable">
+	<thead>
+	    <tr>
+	        <th style="width:25em">Song</th>
+	        <th style="width:15em">Title</th>
+	        <th style="width:20em">Artist</th>
+	    </tr>
+    </thead>
+
+    <tbody id="songListTableBody">
+	    {{#each songList}}
+	    <tr>
+	        <td>
+	            <img src="{{this.metaData.imageUrl}}" 
+	            	onerror=this.src="https://ds604.neocities.org/Public/dinosaur.png"
+	            	style="height: 40px; display: inline; float: left">
+	            <!--<audio controls src="{{this.url}}"></audio>-->
+            	<audio-player title="{{this.metaData.title}}"
+	              src="{{this.url}}"
+	              bar-width="5"
+	              bar-gap="2"
+	              autostart="0" autostart="false" preload ="none" crossorigin
+	              style=""
+	               ></audio-player>
+	        </td>
+	        <td style="padding-left:0.5em">{{this.metaData.title}}</td>
+	        <td style="padding-left:0.5em">{{this.metaData.artist}}</td>
+	    </tr>
+	    {{/each}}
+    </tbody>
+
+</table>
+
+
+<script>
+let songList = [
+    {
+        metaData: {
+            artist: "Method Man feat. Busta Rhymes",
+            title: "What's Happenin'",
+            imageUrl: "https://ds604.neocities.org/Public/sound/images/MethodMan_WhatsHappenin.png"
+        },
+        url: "https://ds604.neocities.org/Public/sound/02%20What's%20Happenin%20(Feat%20Busta%20Rh.mp3"
+    },
+    {
+        metaData: {
+            artist: "Fugees",
+            title: "Vocab",
+            imageUrl: "https://ds604.neocities.org/Public/sound/images/Fugees_Vocab.png"
+        },
+        url: "https://ds604.neocities.org/Public/sound/Vocab%20(Refugees%20Hip%20Hop%20Remix).mp3"
+    },
+    {
+        metaData: {
+            artist: "Kid Koala",
+            title: "Third World Lover",
+            imageUrl: "https://ds604.neocities.org/Public/sound/images/KidKoala_ThirdWorldLover.png"
+        },
+        url: "https://ds604.neocities.org/Public/sound/NeverForgiveAction_2%20Third%20World%20Lover.mp3"
+    },
+    {
+        metaData: {
+            artist: "Dillon Francis & Diplo feat. Maluca",
+            title: "Que Que",
+            imageUrl: "https://ds604.neocities.org/Public/sound/images/BlowYourHead_Moombahton.png"
+        },
+        url: "https://ds604.neocities.org/Public/sound/01%20Que%20Que.mp3"
+    },
+    {
+        metaData: {
+            artist: "Dennis Ferrer",
+            title: "Hey Hey (Sabo Moombahton Remix)",
+            imageUrl: "https://ds604.neocities.org/Public/sound/images/BlowYourHead_Moombahton.png"
+        },
+        url: "https://ds604.neocities.org/Public/sound/14%20Hey%20Hey%20(Sabo%20Moombahton%20Remix).mp3"
+    },
+]
+
+function renderSongList(songList, songListElement="songListTableBody"){
+      let songListRender = songList.map(song => {
+          return `
+        <tr>
+            <td>
+                <img src="${song.metaData.imageUrl}" 
+                  onerror=this.src="https://ds604.neocities.org/Public/dinosaur.png"
+                  style="height: 40px; display: inline; float: left">
+                <audio-player title="${song.metaData.title}"
+                  src="${song.url}"
+                  bar-width="5"
+                  bar-gap="2"
+                  crossorigin autostart="0"
+                  style=""
+                   ></audio-player>
+            </td>
+            <td style="padding-left:0.5em">${song.metaData.title}</td>
+            <td style="padding-left:0.5em">${song.metaData.artist}</td>
+        </tr>`
+      }).join('\n')
+
+      let songListTableBody = document.getElementById(songListElement)
+      songListTableBody.innerHTML = songListRender
+    }
+renderSongList(songList, "songListTableBody")
+</script>
